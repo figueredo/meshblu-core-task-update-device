@@ -90,3 +90,19 @@ describe 'UpdateDevice', ->
 
         it 'should respond with a 404', ->
           expect(@response.metadata.code).to.equal 404
+
+      describe 'when request contains invalid JSON', ->
+        beforeEach (done) ->
+          request =
+            metadata:
+              responseId: 'used-as-biofuel'
+              auth:
+                uuid: 'thank-you-for-considering'
+                token: 'the-environment'
+              toUuid: 'skin-falls-off'
+            rawData: 'Ω'
+
+          @sut.do request, (@error) => done()
+
+        it 'should yield an error', ->
+          expect(=> throw @error).to.throw 'Error parsing JSON: Unexpected token Ω'
