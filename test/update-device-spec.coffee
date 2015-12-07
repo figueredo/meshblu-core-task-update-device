@@ -5,6 +5,7 @@ UpdateDevice = require '../'
 
 describe 'UpdateDevice', ->
   beforeEach (done) ->
+    @uuidAliasResolver = resolve: (uuid, callback) => callback(null, uuid)
     @datastore = new Datastore
       database: mongojs('meshblu-core-task-update-device')
       moment: moment
@@ -13,7 +14,7 @@ describe 'UpdateDevice', ->
     @datastore.remove done
 
   beforeEach ->
-    @sut = new UpdateDevice datastore: @datastore
+    @sut = new UpdateDevice {@datastore, @uuidAliasResolver}
 
   describe '->do', ->
     describe 'when the device does not exist in the datastore', ->
