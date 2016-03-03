@@ -1,11 +1,19 @@
+_ = require 'lodash'
 mongojs = require 'mongojs'
 moment = require 'moment'
 Datastore = require 'meshblu-core-datastore'
+redis  = require 'fakeredis'
 UpdateDevice = require '../'
+JobManager = require 'meshblu-core-job-manager'
+uuid = require 'uuid'
 
 describe 'UpdateDevice', ->
   beforeEach (done) ->
+    @pubSubKey = uuid.v1()
     @uuidAliasResolver = resolve: (uuid, callback) => callback(null, uuid)
+    @jobManager = new JobManager
+      client: _.bindAll redis.createClient @pubSubKey
+      timeoutSeconds: 1
     @datastore = new Datastore
       database: mongojs('meshblu-core-task-update-device')
       moment: moment
@@ -14,7 +22,7 @@ describe 'UpdateDevice', ->
     @datastore.remove done
 
   beforeEach ->
-    @sut = new UpdateDevice {@datastore, @uuidAliasResolver}
+    @sut = new UpdateDevice {@datastore, @uuidAliasResolver, @jobManager}
 
   describe '->do', ->
     describe 'when the device does not exist in the datastore', ->
@@ -58,6 +66,32 @@ describe 'UpdateDevice', ->
 
         it 'should respond with a 204', ->
           expect(@response.metadata.code).to.equal 204
+
+        describe 'JobManager gets DeliverConfigMessage job', (done) ->
+          beforeEach (done) ->
+            @jobManager.getRequest ['request'], (error, @request) =>
+              done error
+
+          it 'should be a config messageType', ->
+            message =
+              uuid:"2-you-you-eye-dee"
+              token:"never-gonna-guess-me"
+              meshblu:
+                tokens:
+                  "GpJaXFa3XlPf657YgIpc20STnKf2j+DcTA1iRP5JJcg=":{}
+              sandbag:"this'll hold that pesky tsunami!"
+
+            auth =
+              uuid: 'thank-you-for-considering'
+              token: 'the-environment'
+
+            {rawData, metadata} = @request
+            expect(metadata.auth).to.deep.equal auth
+            expect(metadata.jobType).to.equal 'DeliverConfigMessage'
+            expect(metadata.fromUuid).to.equal '2-you-you-eye-dee'
+            expect(metadata.messageType).to.equal 'config'
+            expect(metadata.toUuid).to.equal '2-you-you-eye-dee'
+            expect(JSON.parse rawData).to.containSubset message
 
         describe 'when the record is retrieved', ->
           beforeEach (done) ->
