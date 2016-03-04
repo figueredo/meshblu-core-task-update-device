@@ -1,7 +1,16 @@
 language: node_js
 node_js:
-- '0.11'
+- '5'
+env:
+- CXX=g++-4.8
+services:
+- mongodb
 addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
   code_climate:
     repo_token: 757ed9af2195b942c348d9851dfcd4745ec05efab634efc002ea459411f0513f
 before_script:
@@ -12,7 +21,7 @@ deploy:
   provider: npm
   email: serveradmin@octoblu.com
   api_key:
-    secure: iMgVG/3meFyJYV8JDJnBgZJTSyui5vMI/zPW3L157InRxP9rTp01/NVUuY8Aw1GNxP02MR0B76S1LWTdfn6n0JBk0h6Xyec41K7H+meusl2Xm+vQcZhmDXixV97dhaV9IpRSssbDHHg4kl3WQcN56kXpxglKRouNAygLstxt5F8xT1JayYbGcnPQ2mho5o+v9HgDBf7rrjDD9cRddm8vZHTz//ff5B+6z+0lYwy8b9tLjimJmBIrsdNVXSCf6zeActjxSQCKUERSO5r3Sf0G8B51wT8rjZy+8vkpcyylFX1g+HoN3vd9Zaog5pDfDkDAqDf9V9U4zuf7XIvlP7W6qHP8KgNFUz8kM0idrvxmWr7t73U5Mn1wlH/tjiTC/o131SYYD5aI85XubfqTTplxbOikwZp24uQ6GEMTeLYB6JRHHARuiMfawFHoVnQ0qZ1KlYezjPWM+2tWpQej8JZkV7SHNpOB9zN9/M7+zei5yhlY69ovkFwwh+kk0Ti35pJGfPyR5ZEGZ+twhGlb5hxmUnLkR4Ejixx8u5d6HBHA/RP7sZMMhrwvslfiGcQqDTTPcZmy8q9eoZ7bEhkleyyZmnvQzNJF5zdLW7ZVkKOkhN5EJKaL3ZU2m9T0g4LteFIW2jMmzozI21Yy6okNWORZj9wUNe/rFGl/drwaTo1otkU=
+    secure: QHcc1Ki1BSz7QnOLKo1ZZo3JTqFeIcO8ZFIz+JT/yl1OxegjrTxXpAdzV0HQ1KSD29klc7o5a3ryL1tJX8RRLliYuB6g2sFWmNx8lx6gPduqh7AX3pBBIAbj6XmCAKT5WBfZjRa0ItuD4KlYBowvO5tM8cIdOA/z3UDpci9aQgsLjWZncWjuIggIPUDKkmE66V/h1bLDWfA2JJkU9sGBnIYAnIwhQ6tujg+sQkr63Qv3xlRW9rLHETRNZ69R8DnyzrXLoyvmLPmQGfsh0/RqUJ177XhQ2pFJQBza8/BslxNhMaByUdWprL8UDiboXyDPBbmecULCggR10H/N9c6YsiZ9x5zpBxIvdjEwfUK4mgmJ0l67Siwb26xkk659dviZwUqFJReEzPawZDDW4H/3DYg3rZQVPMftNLQ4BbtNq4PDtVKsSC5zCTicWZeDoiS7kPeX5H8uT+tTeugZkFO1gSz+qquFBHGlfeTsuD1d/0GA7K/9QqWlEmhOQ/LKsLpl8qgM9+N6ENSe6qAXpt9UhinCCAbXCeWATzZU7mnmCdN+NYmfF0jHf5gHaRFj084mPiJN8MHA6sgzdHVLSmFnw68xNBd7C0fjBIP4pDCqMDz4Qcqb2MvYUF6XQqbgBipL6v27TYpOcQzsMtTEPy++ptZ69rtDMdwRp5lB5OstuTE=
   on:
     tags: true
     branches: true
