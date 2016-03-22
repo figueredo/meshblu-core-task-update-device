@@ -86,7 +86,7 @@ describe 'UpdateDevice', ->
               token: 'the-environment'
 
             {rawData, metadata} = @request
-            expect(metadata.auth).to.deep.equal auth
+            expect(metadata.auth).to.deep.equal uuid: '2-you-you-eye-dee'
             expect(metadata.jobType).to.equal 'DeliverConfigMessage'
             expect(metadata.fromUuid).to.equal '2-you-you-eye-dee'
             expect(metadata.messageType).to.equal 'config'

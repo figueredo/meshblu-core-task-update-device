@@ -20,7 +20,10 @@ class UpdateDevice
       @deviceManager.findOne {uuid: toUuid}, (error, message) =>
         return callback error if error?
 
-        @_createJob {messageType: 'config', jobType: 'DeliverConfigMessage', toUuid: toUuid, fromUuid: toUuid, message, auth}, (error) =>
+        newAuth =
+          uuid: toUuid
+
+        @_createJob {messageType: 'config', jobType: 'DeliverConfigMessage', toUuid: toUuid, fromUuid: toUuid, message, auth: newAuth}, (error) =>
           return callback error if error?
           return callback null, metadata: code: 204
 
