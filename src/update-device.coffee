@@ -24,8 +24,9 @@ class UpdateDevice
           uuid: toUuid
 
         @_createJob {messageType: 'config', jobType: 'DeliverConfigMessage', toUuid: toUuid, fromUuid: toUuid, message, auth: newAuth}, (error) =>
-          return callback error if error?
-          return callback null, metadata: code: 204
+          @_createJob {messageType: 'config', jobType: 'DeliverConfigureSent', fromUuid: toUuid, message, auth: newAuth}, (error) =>
+            return callback error if error?
+            return callback null, metadata: code: 204
 
   _createJob: ({messageType, jobType, toUuid, message, fromUuid, auth}, callback) =>
     request =
