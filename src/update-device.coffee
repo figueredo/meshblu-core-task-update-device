@@ -68,6 +68,6 @@ class UpdateDevice
 
   _isUserError: (error) =>
     return false unless error?
-    _.include [52, 57], error.code
+    _.include [52, 57, 15896], error.code
 
 module.exports = UpdateDevice
