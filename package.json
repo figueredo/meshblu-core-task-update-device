@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-task-update-device",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Meshblu core task for updating a device",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "meshblu-core-datastore": "^2.1.0",
     "mocha": "^2.3.4",
     "mocha-istanbul": "^0.2.0",
-    "mongojs": "^1.4.1",
+    "mongojs": "^2.3.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
   },

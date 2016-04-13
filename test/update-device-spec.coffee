@@ -166,7 +166,29 @@ describe 'UpdateDevice', ->
               toUuid: 'skin-falls-off'
             rawData: 'Ω'
 
-          @sut.do request, (@error) => done()
+          @sut.do request, (error, @response) => done error
 
-        it 'should yield an error', ->
-          expect(=> throw @error).to.throw 'Error parsing JSON: Unexpected token Ω'
+        it 'should respond with a 422', ->
+          expect(@response.metadata.code).to.equal 422
+
+      describe 'when request contains invalid mongo update', ->
+        beforeEach (done) ->
+          record =
+            uuid: '2-you-you-eye-dee'
+            token: 'never-gonna-guess-me'
+            meshblu:
+              tokens:
+                'GpJaXFa3XlPf657YgIpc20STnKf2j+DcTA1iRP5JJcg=': {}
+          @datastore.insert record, done
+
+        beforeEach (done) ->
+          request =
+            metadata:
+              responseId: 'used-as-biofuel'
+              toUuid: '2-you-you-eye-dee'
+            rawData: '{"$set":{"$foo":true}}'
+
+          @sut.do request, (error, @response) => done error
+
+        it 'should respond with a 422', ->
+          expect(@response.metadata.code).to.equal 422
