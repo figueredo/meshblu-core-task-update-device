@@ -1,6 +1,6 @@
-_      = require 'lodash'
-http   = require 'http'
-uuid   = require 'uuid'
+_             = require 'lodash'
+http          = require 'http'
+uuid          = require 'uuid'
 DeviceManager = require 'meshblu-core-manager-device'
 
 class UpdateDevice
@@ -17,10 +17,10 @@ class UpdateDevice
     @deviceManager.update {uuid: toUuid, data: update}, (error, results) =>
       return @_doUserErrorCallback request, error, 422, callback if @_isUserError error
       return @_doErrorCallback request, error, callback if error?
-      return @_doCallback request, 404, callback unless 0 < _.first(_.pluck(results, 'n'))
 
       @deviceManager.findOne {uuid: toUuid}, (error, message) =>
         return @_doErrorCallback request, error, callback if error?
+        return @_doCallback request, 404, callback unless message?
 
         newAuth =
           uuid: toUuid

@@ -1,25 +1,26 @@
-_ = require 'lodash'
-mongojs = require 'mongojs'
-moment = require 'moment'
-Datastore = require 'meshblu-core-datastore'
-redis  = require 'fakeredis'
+_            = require 'lodash'
+mongojs      = require 'mongojs'
+moment       = require 'moment'
+Datastore    = require 'meshblu-core-datastore'
+redis        = require 'fakeredis'
 UpdateDevice = require '../'
-JobManager = require 'meshblu-core-job-manager'
-uuid = require 'uuid'
+JobManager   = require 'meshblu-core-job-manager'
+uuid         = require 'uuid'
 
 describe 'UpdateDevice', ->
   beforeEach (done) ->
-    @pubSubKey = uuid.v1()
+    @redisKey = uuid.v1()
     @uuidAliasResolver = resolve: (uuid, callback) => callback(null, uuid)
     @jobManager = new JobManager
-      client: _.bindAll redis.createClient @pubSubKey
+      client: _.bindAll redis.createClient @redisKey
       timeoutSeconds: 1
+    database = mongojs 'meshblu-core-task-update-device', ['devices']
     @datastore = new Datastore
-      database: mongojs('meshblu-core-task-update-device')
+      database: database
       moment: moment
       collection: 'devices'
 
-    @datastore.remove done
+    database.devices.remove done
 
   beforeEach ->
     @sut = new UpdateDevice {@datastore, @uuidAliasResolver, @jobManager}
@@ -124,7 +125,7 @@ describe 'UpdateDevice', ->
 
         describe 'when the record is retrieved', ->
           beforeEach (done) ->
-            @datastore.findOne uuid: '2-you-you-eye-dee', (error, @record) =>
+            @datastore.findOne {uuid: '2-you-you-eye-dee'}, (error, @record) =>
               done error
 
           it 'should update the record', ->
