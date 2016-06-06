@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-task-update-device",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Meshblu core task for updating a device",
   "main": "index.js",
   "scripts": {
