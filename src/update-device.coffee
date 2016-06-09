@@ -13,8 +13,8 @@ class UpdateDevice
       update = JSON.parse request.rawData
     catch error
       return @_doUserErrorCallback request, new Error("Error parsing JSON: #{error.message}"), 422, callback
-
-    @deviceManager.update {uuid: toUuid, data: update}, (error, results) =>
+      
+    @deviceManager.update {uuid: toUuid, data: update}, (error) =>
       return @_doUserErrorCallback request, error, 422, callback if @_isUserError error
       return @_doErrorCallback request, error, callback if error?
 

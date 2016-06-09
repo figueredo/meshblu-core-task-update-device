@@ -1,16 +1,18 @@
-_            = require 'lodash'
-mongojs      = require 'mongojs'
-moment       = require 'moment'
-Datastore    = require 'meshblu-core-datastore'
-redis        = require 'fakeredis'
-UpdateDevice = require '../'
-JobManager   = require 'meshblu-core-job-manager'
-uuid         = require 'uuid'
+_             = require 'lodash'
+mongojs       = require 'mongojs'
+moment        = require 'moment'
+Datastore     = require 'meshblu-core-datastore'
+redis         = require 'fakeredis'
+UpdateDevice  = require '../'
+JobManager    = require 'meshblu-core-job-manager'
+DeviceManager = require 'meshblu-core-manager-device'
+uuid          = require 'uuid'
 
 describe 'UpdateDevice', ->
   beforeEach (done) ->
     @redisKey = uuid.v1()
     @uuidAliasResolver = resolve: (uuid, callback) => callback(null, uuid)
+
     @jobManager = new JobManager
       client: _.bindAll redis.createClient @redisKey
       timeoutSeconds: 1
@@ -19,6 +21,8 @@ describe 'UpdateDevice', ->
       database: database
       moment: moment
       collection: 'devices'
+
+    @deviceManager = new DeviceManager {@datastore, @uuidAliasResolver}
 
     database.devices.remove done
 
@@ -172,24 +176,23 @@ describe 'UpdateDevice', ->
         it 'should respond with a 422', ->
           expect(@response.metadata.code).to.equal 422
 
-      describe 'when request contains invalid mongo update', ->
-        beforeEach (done) ->
-          record =
-            uuid: '2-you-you-eye-dee'
-            token: 'never-gonna-guess-me'
-            meshblu:
-              tokens:
-                'GpJaXFa3XlPf657YgIpc20STnKf2j+DcTA1iRP5JJcg=': {}
-          @datastore.insert record, done
-
+      describe 'when request contains $ key', ->
         beforeEach (done) ->
           request =
             metadata:
               responseId: 'used-as-biofuel'
               toUuid: '2-you-you-eye-dee'
-            rawData: '{"$set":{"$foo":true}}'
+            rawData: '{"$set":{"$hello":true}}'
 
           @sut.do request, (error, @response) => done error
 
-        it 'should respond with a 422', ->
-          expect(@response.metadata.code).to.equal 422
+        it 'should respond with a 204', ->
+          expect(@response.metadata.code).to.equal 204
+
+        describe 'when the record is retrieved', ->
+          beforeEach (done) ->
+            @deviceManager.findOne { uuid: { $exists: true } }, (error, @device) =>
+              done error
+
+          it 'should update the record', ->
+            expect(@device.$hello).to.be.true
