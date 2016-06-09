@@ -53,6 +53,7 @@ class UpdateDevice
 
   _doErrorCallback: (request, error, callback) =>
     code = error.code ? 500
+    code = 500 unless http.STATUS_CODES[code]?
     response =
       metadata:
         responseId: request.metadata.responseId
@@ -68,6 +69,6 @@ class UpdateDevice
 
   _isUserError: (error) =>
     return false unless error?
-    _.include [52, 57, 15896], error.code
+    _.include [52, 55, 57, 15896], error.code
 
 module.exports = UpdateDevice

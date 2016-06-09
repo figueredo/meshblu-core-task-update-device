@@ -172,6 +172,28 @@ describe 'UpdateDevice', ->
         it 'should respond with a 422', ->
           expect(@response.metadata.code).to.equal 422
 
+      describe 'when request contains an update with $ref', ->
+        beforeEach (done) ->
+          record =
+            uuid: 'skin-falls-off'
+            token: 'never-gonna-guess-me'
+            meshblu:
+              tokens:
+                'GpJaXFa3XlPf657YgIpc20STnKf2j+DcTA1iRP5JJcg=': {}
+          @datastore.insert record, done
+
+        beforeEach (done) ->
+          request =
+            metadata:
+              responseId: 'used-as-biofuel'
+              toUuid: 'skin-falls-off'
+            rawData: '{"$set":{"hello":{"$ref":"something"}}}'
+
+          @sut.do request, (error, @response) => done error
+
+        it 'should respond with a 422', ->
+          expect(@response.metadata.code).to.equal 422
+
       describe 'when request contains invalid mongo update', ->
         beforeEach (done) ->
           record =
