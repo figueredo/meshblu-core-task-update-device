@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-task-update-device",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Meshblu core task for updating a device",
   "main": "index.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "async": "^1.5.0",
     "lodash": "^3.10.1",
     "meshblu-core-job-manager": "^6.1.2",
-    "meshblu-core-manager-device": "^3.2.0",
+    "meshblu-core-manager-device": "^3.3.0",
     "moment": "^2.10.6",
     "uuid": "^2.0.1"
   },

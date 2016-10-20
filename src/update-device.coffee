@@ -8,13 +8,16 @@ class UpdateDevice
     @deviceManager = new DeviceManager {datastore, uuidAliasResolver}
 
   do: (request, callback) =>
-    {toUuid} = request.metadata
+    { toUuid, auth } = request.metadata
+    if auth?
+      updatedBy = auth.as ? auth.uuid
+
     try
       update = JSON.parse request.rawData
     catch error
       return @_doUserErrorCallback request, new Error("Error parsing JSON: #{error.message}"), 422, callback
-      
-    @deviceManager.update {uuid: toUuid, data: update}, (error) =>
+
+    @deviceManager.update {uuid: toUuid, updatedBy, data: update}, (error) =>
       return @_doUserErrorCallback request, error, 422, callback if @_isUserError error
       return @_doErrorCallback request, error, callback if error?
 
