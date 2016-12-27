@@ -1,7 +1,8 @@
-_             = require 'lodash'
-http          = require 'http'
-uuid          = require 'uuid'
-DeviceManager = require 'meshblu-core-manager-device'
+_                = require 'lodash'
+http             = require 'http'
+uuid             = require 'uuid'
+DeviceManager    = require 'meshblu-core-manager-device'
+mongoStatusCodes = require './mongo-update-codes.json'
 
 class UpdateDevice
   constructor: ({datastore,uuidAliasResolver,@jobManager}) ->
@@ -27,9 +28,21 @@ class UpdateDevice
 
         newAuth =
           uuid: toUuid
-
-        @_createJob {messageType: 'config', jobType: 'DeliverConfigMessage', toUuid: toUuid, fromUuid: toUuid, message, auth: newAuth}, (error) =>
-          @_createJob {messageType: 'config', jobType: 'DeliverConfigureSent', fromUuid: toUuid, message, auth: newAuth}, (error) =>
+        configureMessageOptions =
+          messageType: 'config'
+          jobType: 'DeliverConfigMessage'
+          toUuid: toUuid
+          fromUuid: toUuid
+          message: message
+          auth: newAuth
+        configureSentOptions =
+          messageType: 'config'
+          jobType: 'DeliverConfigureSent'
+          fromUuid: toUuid
+          message: message
+          auth: newAuth
+        @_createJob configureMessageOptions, (error) =>
+          @_createJob configureSentOptions, (error) =>
             return @_doErrorCallback request, error, callback if error?
             return @_doCallback request, 204, callback
 
@@ -72,6 +85,6 @@ class UpdateDevice
 
   _isUserError: (error) =>
     return false unless error?
-    _.include [52, 55, 57, 15896], error.code
+    _.include mongoStatusCodes, error.code
 
 module.exports = UpdateDevice
