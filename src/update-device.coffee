@@ -18,14 +18,14 @@ class UpdateDevice
     catch error
       return @_doUserErrorCallback request, new Error("Error parsing JSON: #{error.message}"), 422, callback
 
-    @deviceManager.update {uuid: toUuid, updatedBy, data: update}, (error, modified) =>
+    @deviceManager.update {uuid: toUuid, updatedBy, data: update}, (error, result) =>
       return @_doUserErrorCallback request, error, 422, callback if @_isUserError error
       return @_doErrorCallback request, error, callback if error?
-      return @_doCallback request, 304, callback unless modified
 
       @deviceManager.findOne {uuid: toUuid}, (error, message) =>
         return @_doErrorCallback request, error, callback if error?
         return @_doCallback request, 404, callback unless message?
+        return @_doCallback request, 304, callback unless result.updated
 
         newAuth =
           uuid: toUuid

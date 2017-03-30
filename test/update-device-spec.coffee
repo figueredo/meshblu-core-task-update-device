@@ -202,12 +202,12 @@ describe 'UpdateDevice', ->
             expect(@device.$hello).to.be.true
 
       describe 'when request does not actually change anything', ->
-        beforeEach (done) ->
+        beforeEach 'do update', (done) ->
           request =
             metadata:
               responseId: 'used-as-biofuel'
               toUuid: '2-you-you-eye-dee'
-            rawData: '{"$set":{"$hair":"green"}}'
+            rawData: '{"$set":{"hair":"green"}}'
 
           @sut.do request, (error, @response) => done error
 
@@ -223,4 +223,4 @@ describe 'UpdateDevice', ->
             expect(@device.meshblu.updatedAt).to.equal '2017-03-30T17:24:52Z'
 
           it 'should not update updatedBy', ->
-            expect(@device.meshblu.updatedAt).to.equal '5'
+            expect(@device.meshblu.updatedBy).to.equal '5'
