@@ -53,8 +53,11 @@ describe 'UpdateDevice', ->
           uuid: '2-you-you-eye-dee'
           token: 'never-gonna-guess-me'
           meshblu:
+            updatedAt: '2017-03-30T17:24:52Z'
+            updatedBy: '5'
             tokens:
               'GpJaXFa3XlPf657YgIpc20STnKf2j+DcTA1iRP5JJcg=': {}
+          hair: 'green'
         @datastore.insert record, done
 
       describe 'when called', ->
@@ -197,3 +200,27 @@ describe 'UpdateDevice', ->
 
           it 'should update the record', ->
             expect(@device.$hello).to.be.true
+
+      describe 'when request does not actually change anything', ->
+        beforeEach (done) ->
+          request =
+            metadata:
+              responseId: 'used-as-biofuel'
+              toUuid: '2-you-you-eye-dee'
+            rawData: '{"$set":{"$hair":"green"}}'
+
+          @sut.do request, (error, @response) => done error
+
+        it 'should respond with a 304', ->
+          expect(@response.metadata.code).to.equal 304
+
+        describe 'when the record is retrieved', ->
+          beforeEach (done) ->
+            @deviceManager.findOne { uuid: { $exists: true } }, (error, @device) =>
+              done error
+
+          it 'should not update updatedAt', ->
+            expect(@device.meshblu.updatedAt).to.equal '2017-03-30T17:24:52Z'
+
+          it 'should not update updatedBy', ->
+            expect(@device.meshblu.updatedAt).to.equal '5'
