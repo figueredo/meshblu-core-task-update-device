@@ -8,8 +8,10 @@ services:
 addons:
   apt:
     sources:
+    - mongodb-3.0-precise
     - ubuntu-toolchain-r-test
     packages:
+    - mongodb-org-server
     - g++-4.8
   code_climate:
     repo_token: 757ed9af2195b942c348d9851dfcd4745ec05efab634efc002ea459411f0513f
